@@ -8,47 +8,6 @@
 
 import SwiftUI
 
-
-class Expenses: ObservableObject {
-    @Published var items = [ExpenseItem](){
-        didSet {
-            let encoder = JSONEncoder()
-            
-            if let encoded = try? encoder.encode(items) {
-                UserDefaults.standard.set(encoded, forKey: "Items")
-            }
-            
-        }
-    }
-    
-    init() {
-        if let items = UserDefaults.standard.data(forKey: "Items") {
-            let decoder = JSONDecoder()
-            
-            if let decoded = try? decoder.decode([ExpenseItem].self, from: items ) {
-                self.items = decoded
-                return
-            }
-        }
-        self.items = []
-    }
-}
-
-struct AmountColor: ViewModifier {
-    var expenseAmount: Int
-    
-    func body(content: Content) -> some View {
-            switch expenseAmount {
-            case 0...10:
-            return content.foregroundColor(.black)
-            case  11...100 :
-           return content.foregroundColor(.green)
-            default: return content.foregroundColor(.red)
-        }
-    }
-
-}
-
 struct ContentView: View {
     @ObservedObject var expenses = Expenses()
     @State private var showingAddExpense = false
@@ -70,8 +29,7 @@ struct ContentView: View {
                     }
                 }
                 .onDelete(perform: removeItems)
-            }
-                
+            }   
             .navigationBarTitle("iExpense")
             .navigationBarItems(leading: EditButton() ,trailing: Button( action: { self.showingAddExpense = true
             }){
